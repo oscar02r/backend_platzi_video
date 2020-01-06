@@ -7,9 +7,9 @@ function scopeValidationHandler(allowedScopes){
                 }
 
                 const hasAccess = allowedScopes
-                .map(allowedScope => req.user.scopes.include(allowedScope)
-                .find(allowed => Boolean(allowed))
-                );
+                .map(allowedScope => req.user.scopes.includes(allowedScope))
+                .find(allowed => Boolean(allowed));
+            
 
                 if(hasAccess){
                       next();

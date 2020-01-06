@@ -22,79 +22,56 @@ function authApi(app) {
     const THIRTY_DAYS_IN_SEC = 2592000;
     const TWO_HOURS_IN_SEC = 7200;
 
-    router.post('/sign-in', async function (req, res, next) {
-        //const { apiKeyToken } = req.body;
-        const { rememberMe } = req.body;
-       /* if (!apiKeyToken) {
-            next(boom.unauthorized('ApiKeyToken is required'));
-        }*/
+    router.post('/sign-in', function(req, res, next){
+        const {apiKeyToken} = req.body;
+    
+        if(!apiKeyToken){
+            next(boom.unauthorized());  
+        }
 
-        passport.authenticate('basic', function (error, data) {
-            try {
+        passport.authenticate('basic',function(error, user){
+               try {
+                   if(error || !user){
+                       next(boom.unauthorized());
+                   }
 
-                if (error || !data) {
-                    next(boom.unauthorized());
-                }
+                   req.login(user,{session:false},
+                    async function( error ){
+                       if(error){
+                          next(error);
+                       }
+                    const apiKey = await apiKeysService.getApiKey({token:apiKeyToken});
 
-                req.login(data, {
-                    session: false
-                }, 
-                async function (error) {
-                    if (error) {
-                        next(error);
-                    }
-                    
-                    const {token, ...user} = data;
-
-                    res.cookie("token", token,{
-                        httpOnly: !config.dev,
-                        secure:!config.dev,
-                        maxAge: rememberMe ? THIRTY_DAYS_IN_SEC : TWO_HOURS_IN_SEC
-                    });
-                    /*const apiKey = await apiKeysService.getApiKey({
-                        token: apiKeyToken
-                    });*/
-
-
-
-                   /* if (!apiKey) {
+                    if(!apiKey){
                         next(boom.unauthorized());
-                    }*/
-
-                   /* const {
-                        _id: id,
-                        name,
-                        email
-                    } = user;
-
-                    const payload = {
-                        sub: id,
+                    }
+                   
+                    const { _id:id, name, email } = user;
+                    
+                    const payload ={
+                        sub:id,
                         name,
                         email,
                         scopes: apiKey.scopes
-                    }
+                    };
 
-                    const token = jwt.sign(payload, config.authJwtSecret, {
-                        expiresIn: '15m'
-                    });*/
+                    const token = jwt.sign(payload, config.authJwtSecret, {expiresIn: '15m'});
 
-                    /*return res.status(200).json({
+                    return res.status(200).json({
                         token,
-                        user: {
+                        user:{
                             id,
                             name,
                             email
                         }
-                    });*/
-
-                    res.status(200).json(user);
-                });
-
-            } catch (error) {
-                next(error)
-            }
-        })(req, res, next);
-    });
+                    });
+                   });
+               } catch (error) {
+                   next(error);
+               }
+        } )(req, res, next);
+        
+  });
 
    router.post('/sign-up', async function(req, res, next){
          const { body:user } = req;
