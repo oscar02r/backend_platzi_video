@@ -19,38 +19,49 @@ function authApi(app) {
 
     const apiKeysService = new ApiKeysService();
     const userService = new UsersService();
+    const THIRTY_DAYS_IN_SEC = 2592000;
+    const TWO_HOURS_IN_SEC = 7200;
 
     router.post('/sign-in', async function (req, res, next) {
-        const { apiKeyToken } = req.body;
-
-        if (!apiKeyToken) {
+        //const { apiKeyToken } = req.body;
+        const { rememberMe } = req.body;
+       /* if (!apiKeyToken) {
             next(boom.unauthorized('ApiKeyToken is required'));
-        }
+        }*/
 
-        passport.authenticate('basic', function (error, user) {
+        passport.authenticate('basic', function (error, data) {
             try {
 
-                if (error || !user) {
+                if (error || !data) {
                     next(boom.unauthorized());
                 }
 
-                req.login(user, {
+                req.login(data, {
                     session: false
                 }, 
                 async function (error) {
                     if (error) {
                         next(error);
                     }
+                    
+                    const {token, ...user} = data;
 
-                    const apiKey = await apiKeysService.getApiKey({
-                        token: apiKeyToken
+                    res.cookie("token", token,{
+                        httpOnly: !config.dev,
+                        secure:!config.dev,
+                        maxAge: rememberMe ? THIRTY_DAYS_IN_SEC : TWO_HOURS_IN_SEC
                     });
+                    /*const apiKey = await apiKeysService.getApiKey({
+                        token: apiKeyToken
+                    });*/
 
-                    if (!apiKey) {
+
+
+                   /* if (!apiKey) {
                         next(boom.unauthorized());
-                    }
+                    }*/
 
-                    const {
+                   /* const {
                         _id: id,
                         name,
                         email
@@ -65,16 +76,18 @@ function authApi(app) {
 
                     const token = jwt.sign(payload, config.authJwtSecret, {
                         expiresIn: '15m'
-                    });
+                    });*/
 
-                    return res.status(200).json({
+                    /*return res.status(200).json({
                         token,
                         user: {
                             id,
                             name,
                             email
                         }
-                    });
+                    });*/
+
+                    res.status(200).json(user);
                 });
 
             } catch (error) {
