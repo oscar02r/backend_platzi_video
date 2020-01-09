@@ -19,10 +19,8 @@ function authApi(app) {
 
     const apiKeysService = new ApiKeysService();
     const userService = new UsersService();
-    const THIRTY_DAYS_IN_SEC = 2592000;
-    const TWO_HOURS_IN_SEC = 7200;
 
-    router.post('/sign-in', function(req, res, next){
+   router.post('/sign-in', function(req, res, next){
         const {apiKeyToken} = req.body;
     
         if(!apiKeyToken){
@@ -55,7 +53,7 @@ function authApi(app) {
                         scopes: apiKey.scopes
                     };
 
-                    const token = jwt.sign(payload, config.authJwtSecret, {expiresIn: '15m'});
+                    const token = jwt.sign(payload, config.authJwtSecret, {expiresIn: '1h'});
 
                     return res.status(200).json({
                         token,

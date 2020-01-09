@@ -19,7 +19,7 @@ function userMoviesApi(app){
 
         router.get('/', passport.authenticate('jwt', {session:false }), 
           scopesValidationHandler(['read:user-movies']),
-          validationHandler({userId: userIdSchema}, 'query'),
+        //  validationHandler({userId: userIdSchema}, 'query'),
           async function(req, res, next){
                const {userId} = req.query;
                try {
@@ -34,30 +34,32 @@ function userMoviesApi(app){
         }
         );
 
-        router.post('/', passport.authenticate('jwt', {session:false }), 
-          scopesValidationHandler(['create:user-movies']),
-          validationHandler(createUserMovieSchema), 
-          async function(req, res,next){
-              const {body:userMovie} = req;
-
+        router.post(
+            '/',
+            passport.authenticate('jwt', { session: false }),
+            scopesValidationHandler(['create:user-movies']),
+           // validationHandler(createUserMovieSchema),
+            async function(req, res, next) {
+              const { body: userMovie } = req;
+        
               try {
-                  const createdUserMovieId = await userMoviesService.createUsrMovie({
-                      userMovie
-                  });
-
-                  res.status(201).json({
-                       data:createdUserMovieId,
-                       message:'User movie created'
-                  });
-              } catch (error) {
-                  next(error)
-                  
+                const createdUserMovieId = await userMoviesService.createUserMovie({
+                  userMovie
+                });
+        
+                res.status(201).json({
+                  data: createdUserMovieId,
+                  message: 'user movie createds'
+                });
+              } catch (err) {
+                next(err);
               }
-        });
+            }
+          );
 
         router.delete('/:userMovieId', passport.authenticate('jwt', {session:false }),
           scopesValidationHandler(['delete:user-movies']),
-          validationHandler({userMovieId: movieIdSchema}, 'params'),
+          //validationHandler({userMovieId: movieIdSchema}, 'params'),
           async function(req, res, next){
               const {userMovieId} = req.params;
               try {

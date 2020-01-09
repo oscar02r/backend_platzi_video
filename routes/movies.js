@@ -87,9 +87,8 @@ function moviesApi(app) {
 
     router.delete('/:movieId',passport.authenticate('jwt', { session:false }), 
       scopesValidationHandler(['delete:movies']),
-      validationHandler({
-        movieId: movieIdSchema
-    }, 'params'), async function (req, res, next) {
+     // validationHandler({movieId: movieIdSchema}, 'params'), 
+      async function (req, res, next) {
         const {
             movieId
         } = req.params;
