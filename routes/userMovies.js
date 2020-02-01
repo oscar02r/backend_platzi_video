@@ -70,7 +70,7 @@ function userMoviesApi(app){
                       message:'User movie deleted'
                   });
               } catch (error) {
-                  next(error)
+                  next(error);
               }
         });
 

@@ -64,9 +64,11 @@ function moviesApi(app) {
         }
     });
 
-    router.post('/', passport.authenticate('jwt', 
+    router.post('/create', passport.authenticate('jwt', { session:false }),
       scopesValidationHandler(['create:movies']),
-      { session:false }), async function (req, res, next) {
+      validationHandler(createMoviesSchema),
+      async function (req, res, next) {
+         
         const {
             body: movie
         } = req;
@@ -82,16 +84,17 @@ function moviesApi(app) {
         }
     });
 
-    router.delete('/:movieId',passport.authenticate('jwt', { session:false }), 
+    router.delete('/:id',passport.authenticate('jwt', { session:false }), 
       scopesValidationHandler(['delete:movies']),
-      validationHandler({ movieIdSchema}, 'params'), 
+      validationHandler(movieIdSchema, 'params'), 
       async function (req, res, next) {
-        const {
-            movieId
-        } = req.params;
+       
         try {
-            const deletemovieId = await movieService.deleteMovieId({ movieId });
-
+            const {
+                id
+            } = req.params;
+            const deletemovieId = await movieService.deleteMovieId({id});;
+                  
             res.status(200).json({
                 data: deletemovieId,
                 message: 'Moive deleted'
