@@ -10,7 +10,7 @@ passport.use(new BasicStrategy(async function(email, password, cb){
 
      try {
          const user = await userService.getUser({email});
-
+          console.log(user);
          if(!user){
              return cb(boom.unauthorized(), false);
          }

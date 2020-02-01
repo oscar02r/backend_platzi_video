@@ -11,9 +11,9 @@ class MoviesService{
         return movies || [];
     }
 
-    async getMovie({movieId}){
-        const movie = await this.mongoDB.get(this.collection, movieId);
-        return movie || {};
+    async getMovie({id}){
+        const movie = await this.mongoDB.get(this.collection, id);
+        return movie || [];
     }
 
     async createMovie({movie}){
@@ -27,8 +27,8 @@ class MoviesService{
         return updateMovieId;
     }
 
-    async deleteMovieId({movieId}){
-        const deleteMovieId = this.mongoDB.delete(this.collection, movieId );
+    async deleteMovieId({id}){
+        const deleteMovieId = this.mongoDB.delete(this.collection, id );
         return deleteMovieId;
     }
 }

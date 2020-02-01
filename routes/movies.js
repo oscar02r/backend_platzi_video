@@ -34,9 +34,9 @@ function moviesApi(app) {
         } = req.query;
         try {
 
-            const movies = await Promise.resolve(movieService.getMovies({
+            const movies = await movieService.getMovies({
                 tags
-            }));
+            });
             res.status(200).json({
                 data: movies,
                 message: 'Moives listed'
@@ -46,19 +46,17 @@ function moviesApi(app) {
         }
     });
 
-    router.get('/:movieId', passport.authenticate('jwt', { session:false }), 
+    router.get('/:id', passport.authenticate('jwt', { session:false }), 
       scopesValidationHandler(['read:movies']),
-      validationHandler({ movieId: movieIdSchema  }, 'params'), async function (req, res, next) {
+      validationHandler(movieIdSchema, 'params'),
+       async function (req, res, next) {
         cacheResponse(res, SIXTY_MINUTES_IN_SECONDS);
-        const { movieId} = req.params;
+        const { id } = req.params;
         try {
-            const movies = await Promise.resolve(movieService.getMovie({
-                movieId
-            }));
-
+            const movie = await movieService.getMovie({id});
 
             res.status(200).json({
-                data: movies,
+                data: movie,
                 message: 'Moive retrieved'
             });
         } catch (err) {
@@ -73,9 +71,7 @@ function moviesApi(app) {
             body: movie
         } = req;
         try {
-            const createMoviId = await Promise.resolve(movieService.createMovie({
-                movie
-            }));
+            const createMoviId = await movieService.createMovie({ movie});
 
             res.status(201).json({
                 data: createMoviId,
@@ -88,15 +84,13 @@ function moviesApi(app) {
 
     router.delete('/:movieId',passport.authenticate('jwt', { session:false }), 
       scopesValidationHandler(['delete:movies']),
-      validationHandler({movieId: movieIdSchema}, 'params'), 
+      validationHandler({ movieIdSchema}, 'params'), 
       async function (req, res, next) {
         const {
             movieId
         } = req.params;
         try {
-            const deletemovieId = await Promise.resolve(movieService.deleteMovieId({
-                movieId
-            }));
+            const deletemovieId = await movieService.deleteMovieId({ movieId });
 
             res.status(200).json({
                 data: deletemovieId,
@@ -109,9 +103,8 @@ function moviesApi(app) {
 
     router.put('/:movieId',passport.authenticate('jwt', { session:false }), 
     scopesValidationHandler(['update:movies']),
-    validationHandler({
-        movieId: movieIdSchema
-    }, 'params'), validationHandler(updateMovieSchema), async function (req, res, next) {
+    validationHandler({movieId: movieIdSchema}, 'params'),
+    validationHandler(updateMovieSchema), async function (req, res, next) {
         const {
             movieId
         } = req.params;
@@ -119,10 +112,10 @@ function moviesApi(app) {
             body: movie
         } = req;
         try {
-            const updatemovieId = await Promise.resolve(movieService.updateMovie({
+            const updatemovieId = await movieService.updateMovie({
                 movieId,
                 movie
-            }));
+            });
 
             res.status(200).json({
                 data: updatemovieId,

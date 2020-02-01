@@ -46,6 +46,7 @@ function generateRandomToken(){
 async function seedApiKeys(){
     try {
         const mongoDB = new MongoLib();
+        
         const promises = apiKeys.map(async apiKey =>{
         await mongoDB.create('api-keys', apiKey);
         });
