@@ -6,8 +6,8 @@ class UserMoviesService {
     this.mongoDB = new MongoLib();
   }
 
-  async getUserMovies({ userId }) {
-    const query = userId && { userId };
+  async getUserMovies( {userMovieId} ) {
+    const query = userMovieId && { userMovieId };
     const userMovies = await this.mongoDB.getAll(this.collection, query);
 
     return userMovies || [];
