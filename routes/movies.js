@@ -37,6 +37,7 @@ function moviesApi(app) {
             const movies = await movieService.getMovies({
                 tags
             });
+
             res.status(200).json({
                 data: movies,
                 message: 'Moives listed'

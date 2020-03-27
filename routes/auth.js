@@ -69,16 +69,15 @@ function authApi(app) {
                         };
 
                         const token = jwt.sign(payload, config.authJwtSecret, {
-                            expiresIn: '1h'
+                            expiresIn: '2 days'
                         });
-                        
+                       
                         return res.status(200).json({
                             token,
                             user: {
                                 id,
                                 name,
-                                email,
-                                st:'Hola'
+                                email
                             }
                         });
                     });
