@@ -7,10 +7,12 @@ const userMovieApi = require('./routes/userMovies');
 const {logErrors, errorHandler, wrapErrors } = require('./utils/middleware/errorHandlers');
 const notFoundHandler = require('./utils/middleware/notFoundHandler');
 const helmet = require('helmet');
+const cors = require('cors')
 
 //Body parser
 app.use(express.json());
 app.use(helmet());
+app.use(cors())
 //app.use(express.urlencoded({ extended:false}));
 // routes
 authApi(app);
