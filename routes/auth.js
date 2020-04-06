@@ -31,13 +31,13 @@ function authApi(app) {
         } = req.body;
 
         if (!apiKeyToken) {
-            next(boom.unauthorized());
+           return next(boom.unauthorized());
         }
 
         passport.authenticate('basic', function (error, user) {
             try {
                 if (error || !user) {
-                    next(boom.unauthorized());
+                  return  next(boom.unauthorized());
                 }
 
                 req.login(user, {
@@ -45,14 +45,14 @@ function authApi(app) {
                     },
                     async function (error) {
                         if (error) {
-                            next(error);
+                          return  next(error);
                         }
                         const apiKey = await apiKeysService.getApiKey({
                             token: apiKeyToken
                         });
 
                         if (!apiKey) {
-                            next(boom.unauthorized());
+                            return next(boom.unauthorized());
                         }
 
                         const {
